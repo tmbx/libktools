@@ -1,0 +1,87 @@
+Import('env lib_NAME')
+
+
+FILES = ['karray.c',
+         'kbuffer.c',
+         'kerror.c',
+         'kfs.c',
+         'khash.c',
+         'kiter.c',
+         'klist.c',
+         'kmem.c',
+         'kpath.c',
+         'kindex.c',
+         'krb_tree.c',
+         'kserializable.c',
+         'kstr.c',
+         'ktime.c',
+         'kthread.c',
+         'ktools.c',
+         'kutils.c',
+         'base64.c',
+         'tbuffer.c',
+         ]
+
+if env["PLATFORM"] == "windows":
+    FILES.append("ksock_win.c")
+else:
+    FILES.append("ksock_unix.c")
+
+FILES.append(env.ExtractSerializable(target = "kserializable_array.c", source = FILES))
+
+install_HEADERS = ['base64.h',
+                   'karray.h',
+                   'kbuffer.h',
+                   'kerror.h',
+                   'kfs.h',
+                   'khash.h',
+                   'kindex.h',
+                   'krb_tree.h',
+                   'kiter.h',
+                   'klist.h',
+                   'kmem.h',
+                   'kpath.h',
+                   'kserializable.h',
+                   'ksock.h',
+                   'kstr.h',
+		   "kthread.h",
+                   'ktime.h',
+                   'ktools.h',
+                   'kutils.h',
+                   'tbuffer.h',
+                   ]
+		   
+shared_OBJS = []
+static_OBJS = []
+for s in FILES:
+    shared_OBJS.append(env.SharedObject(s))
+    static_OBJS.append(env.StaticObject(s))
+
+cpp_path = []
+lib_path = []
+lib_list = ["pthread"]
+if env["PLATFORM"] == "windows":
+        cpp_path.append(env["WIN_PTHREAD"])
+        lib_path.append(env["WIN_PTHREAD"])
+        lib_list.append('ws2_32')
+env["CPPPATH"] += cpp_path
+env["LIBPATH"] += lib_path
+env["LIBS"] += lib_list
+
+shared_LIBS = [env.SharedLibrary(target = lib_NAME,
+                                 source = shared_OBJS,
+                                 LINKFLAGS= '-Wl,-soname,' + lib_NAME + '.so.$BASE_VERSION')]
+
+static_LIBS = [env.StaticLibrary(target = lib_NAME,
+                                 source = static_OBJS)]
+
+OBJS = shared_OBJS + static_OBJS
+
+install = []
+installed_so = env.InstallAs(target = '$LIBDIR/' + lib_NAME + '.so.$VERSION', source = shared_LIBS)
+install.append(installed_so)
+install.append(env.Link(target = ['$LIBDIR/' + lib_NAME + '.so.$BASE_VERSION', '$LIBDIR/' +lib_NAME + '.so'], source = installed_so))
+install.append(env.Install(dir = '$LIBDIR', source = static_LIBS))
+install.append(env.Install(dir = '$INCDIR', source = install_HEADERS))
+
+Return('shared_LIBS static_LIBS OBJS install')
