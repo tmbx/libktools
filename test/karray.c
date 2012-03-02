@@ -6,31 +6,32 @@ static karray array1, array2;
 void test_iterator () {
     struct karray_iter array_iter;
     kiter *iter = (kiter *)&array_iter;
-    int i, j;
+    int i;
+    int arr[] = {0, 1, 2};
+    void *v;
 
     karray_reset(&array1);
 
     for (i = 0; i < 3 ; i++)
-        karray_set(&array1, i, (void *)i);
+        karray_set(&array1, i, &arr[i]);
 
     karray_iter_init(&array_iter, &array1);
     
     i = 0;
-    while (kiter_next(iter, (void **)&j) == 0) {
-        TASSERT(i++ == j);
+    while (kiter_next(iter, &v) == 0) {
+        TASSERT(i++ == *(int *)v);
     }
 
-    TASSERT(kiter_prev(iter, (void **)&j) == 0);
-    TASSERT(kiter_next(iter, (void **)&j) == 1);
+    TASSERT(kiter_prev(iter, &v) == 0);
+    TASSERT(kiter_next(iter, &v) == 1);
 
-    while (kiter_prev(iter, (void **)&j) == 0) {
-        TASSERT(--i == j);
+    while (kiter_prev(iter, &v) == 0) {
+        TASSERT(--i == *(int *)v);
     }
 }
 
 UNIT_TEST(karray) {
     int i = 1, j = 2, k = 3, l = 4;
-    
     karray_init(&array1);
     TASSERT(array1.size == 0);
     

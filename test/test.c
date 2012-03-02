@@ -31,7 +31,7 @@ void start_unit_test(unit_test_t func) {
     if (verbose)
     {
         if (retval == 0) {
-            printf ("0x%X:\n", (unsigned int)func);
+            printf ("0x%p:\n", (void *)func);
         } else
             printf("%s:\n", info.dli_sname);
     }

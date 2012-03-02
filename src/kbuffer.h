@@ -51,7 +51,6 @@ int kbuffer_eof(kbuffer *self);
 
 void kbuffer_grow(kbuffer *self, size_t size);
 
-static inline void kbuffer_seek(kbuffer *self, ssize_t offset, int whence) DEPRECATED;
 static inline void kbuffer_seek(kbuffer *self, ssize_t offset, int whence) {
     switch (whence) {
         case SEEK_SET:
@@ -76,7 +75,7 @@ int kbuffer_read(kbuffer *self, uint8_t *data, size_t len);
 
 uint8_t *kbuffer_read_nbytes (kbuffer *self, size_t size);
 
-int kbuffer_read_buffer(kbuffer *self, kbuffer *into, uint32_t len) DEPRECATED;
+int kbuffer_read_buffer(kbuffer *self, kbuffer *into, uint32_t len);
 
 static inline void kbuffer_write8(kbuffer *self, const uint8_t data) {
     kbuffer_write  (self, &(data), sizeof(uint8_t));
@@ -122,13 +121,11 @@ static inline int kbuffer_read64(kbuffer *self, uint64_t *data) {
     return 0;
 }
 
-static inline void kbuffer_serialize(kbuffer *self, kbuffer *out) DEPRECATED;
 static inline void kbuffer_serialize(kbuffer *self, kbuffer *out) {
     kbuffer_write32(out, self->len);
     kbuffer_write_buffer(out, self);
 }
 
-static inline int kbuffer_read_serialized(kbuffer *self, kbuffer *into) DEPRECATED;
 static inline int kbuffer_read_serialized(kbuffer *self, kbuffer *into) {
     uint32_t size;
     uint8_t *buf_ptr;
@@ -147,17 +144,14 @@ static inline void kbuffer_reset(kbuffer *self) {
     self->pos = 0;
 }
 
-static inline uint8_t *kbuffer_current_write_pos(kbuffer *self) DEPRECATED;
 static inline uint8_t *kbuffer_current_write_pos(kbuffer *self) {
     return self->data + self->len;
 }
 
-static inline size_t kbuffer_left(kbuffer *self) DEPRECATED;
 static inline size_t kbuffer_left(kbuffer *self) {
     return self->len - self->pos;
 }
 
-static inline uint8_t *kbuffer_current_pos(kbuffer *self) DEPRECATED;
 static inline uint8_t *kbuffer_current_pos(kbuffer *self) {
     return self->data + self->pos;
 }

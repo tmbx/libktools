@@ -19,6 +19,6 @@ OBJS = []
 for s in FILES:
     OBJS.append(env.Object(s))
 
-PROGS = [env.Program(target = 'test', source = OBJS + static_LIBS, LINKFLAGS='-rdynamic -ldl -lpthread')]
+PROGS = [env.Program(target = 'test', source = OBJS + static_LIBS, LINKFLAGS='-rdynamic', LIBS=['dl','pthread'])]
 
 Return('OBJS PROGS')
