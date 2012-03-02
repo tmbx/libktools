@@ -123,7 +123,7 @@ int tbuffer_peek_type(tbuffer *self, enum tbuffer_type *type) {
  */
 int tbuffer_read_string(tbuffer *self, const char **str, size_t *str_s) {
     uint8_t t;    
-    size_t s;
+    uint32_t s;
 
     do {
         if (kbuffer_read8(self->dbuf, &t)) break;
